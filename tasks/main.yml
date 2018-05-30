@@ -76,7 +76,7 @@
 - name: wait for win ec2 instances to listen on winrm https port
   wait_for:
     state: started
-    host: '{{item.tagged_instances[0].public_ip}}'
+    host: '{{item.tagged_instances[0].private_ip}}'
     port: '{{win_ec2_winrm_port}}'
     delay: '{{win_ec2_wait_for_delay|default(omit)}}'
     timeout: '{{win_ec2_wait_for_timeout|default(omit)}}'
@@ -98,9 +98,9 @@
 
 - name: add win ec2 instance(s) to inventory
   add_host:
-    name: '{{item.item.tagged_instances[0].public_dns_name|default(item.item.tagged_instances[0].private_dns_name,true)}}'
+    name: '{{ item.item.tagged_instances[0].private_dns_name }}'
     groups: 'ec2,windows,{{win_ec2_name_prefix}}-{{item.item.item.name}}'
-    ansible_host: '{{item.item.tagged_instances[0].public_ip|default(item.item.tagged_instances[0].private_ip,true)}}'
+    ansible_host: '{{item.item.tagged_instances[0].private_ip}}'
     ansible_port: '{{win_ec2_winrm_port}}'
     ansible_user: '{{win_ec2_winrm_user}}'
     ansible_password: '{{item.win_password}}'
